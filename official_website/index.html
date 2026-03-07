@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>semanticEdit | Audio via Intent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #050505; --accent: #ffffff; }
+        body { background-color: var(--bg); color: var(--accent); font-family: 'Inter', sans-serif; overflow-x: hidden; cursor: none; }
+        .cursor-glow { position: fixed; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; pointer-events: none; z-index: 999; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .hero-img { mask-image: linear-gradient(to bottom, black 50%, transparent 100%); opacity: 0.6; }
+        .comparison-container { height: 350vh; }
+        .sticky-box { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .fade-text { position: absolute; opacity: 0; text-align: center; }
+        .shimmer { background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); background-size: 200% 100%; animation: shimmer 3s infinite; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        [data-lang="cn"] .lang-en, [data-lang="en"] .lang-cn { display: none; }
+        .highlight-red { color: rgba(239, 68, 68, 0.8); }
+        .highlight-white { color: #ffffff; font-weight: 600; }
+    </style>
+</head>
+<body data-lang="en">
+
+    <div class="cursor-glow" id="cursor"></div>
+
+    <nav class="fixed top-0 w-full flex justify-between items-center px-10 py-8 z-[100]">
+        <div class="text-2xl font-bold tracking-tighter">semantic<span class="font-extralight opacity-60">Edit</span></div>
+        <div class="flex items-center space-x-8">
+            <div class="hidden md:flex space-x-12 text-[10px] uppercase tracking-[0.3em] opacity-40">
+                <a href="#philosophy" class="hover:opacity-100 transition lang-en">Philosophy</a>
+                <a href="#philosophy" class="hover:opacity-100 transition lang-cn">设计理念</a>
+                <a href="#scenarios" class="hover:opacity-100 transition lang-en">Scenarios</a>
+                <a href="#scenarios" class="hover:opacity-100 transition lang-cn">应用场景</a>
+                <a href="#access" class="hover:opacity-100 transition lang-en">Access</a>
+                <a href="#access" class="hover:opacity-100 transition lang-cn">加入内测</a>
+            </div>
+            <button onclick="toggleLang()" class="text-[10px] border border-white/20 px-3 py-1 rounded-full opacity-60 hover:opacity-100 transition uppercase tracking-widest">
+                <span class="lang-en">CN</span><span class="lang-cn">EN</span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative h-screen flex flex-col items-center justify-center overflow-hidden" id="philosophy">
+        <div class="absolute inset-0 z-0">
+            <img src="http://googleusercontent.com/image_generation_content/1" alt="Sonic Intent" class="w-full h-full object-cover hero-img">
+        </div>
+        <div class="relative z-10 text-center px-6">
+            <h1 class="text-5xl md:text-8xl font-semibold tracking-tight mb-6 lang-en">The Audio Era <br><span class="shimmer">Re-Imagined.</span></h1>
+            <h1 class="text-5xl md:text-8xl font-semibold tracking-tight mb-6 lang-cn">重构<br><span class="shimmer">音频时代。</span></h1>
+            <p class="text-lg md:text-xl font-light opacity-30 max-w-xl mx-auto leading-relaxed lang-en">Beyond the limits of manual editing. Orchestrate complex soundscapes via pure semantic intent.</p>
+            <p class="text-lg md:text-xl font-light opacity-30 max-w-xl mx-auto leading-relaxed lang-cn">超越手动剪辑的极限。通过纯粹的语义意图，自如编排复杂的音频景观。</p>
+        </div>
+    </section>
+
+    <div class="comparison-container">
+        <div class="sticky-box">
+            <div class="fade-text w-full px-10" id="step-1">
+                <h2 class="text-3xl md:text-6xl font-light lang-en">Two weeks for <span class="highlight-red">C-Cut</span>?<br>Months for <span class="highlight-red">P-Tools</span>?</h2>
+                <h2 class="text-3xl md:text-6xl font-light lang-cn">花两周学<span class="highlight-red">某映</span>？<br>花数月练<span class="highlight-red">P某Tools</span>？</h2>
+                <p class="mt-6 text-xl opacity-20 italic lang-en">A legacy of mechanical labor.</p>
+                <p class="mt-6 text-xl opacity-20 italic lang-cn">陈旧的工具，正在消耗你的创造力。</p>
+            </div>
+            <div class="fade-text w-full px-10" id="step-2">
+                <h2 class="text-3xl md:text-6xl font-light lang-en">Discard the <span class="line-through opacity-20">Waveform</span>.</h2>
+                <h2 class="text-3xl md:text-6xl font-light lang-cn">扔掉<span class="line-through opacity-20">波形图</span>。</h2>
+                <p class="mt-6 text-xl opacity-30 lang-en">Your ears know the way. Your intent leads the change.</p>
+                <p class="mt-6 text-xl opacity-30 lang-cn">回归听觉本能。用意图引导创作变革。</p>
+            </div>
+            <div class="fade-text w-full px-10" id="step-3">
+                <h2 class="text-4xl md:text-7xl font-semibold lang-en">10 Minutes. <br><span class="text-white">Zero Learning Cost.</span></h2>
+                <h2 class="text-4xl md:text-7xl font-semibold lang-cn">十分钟。<br><span class="text-white">零学习成本。</span></h2>
+                <p class="mt-6 text-xl opacity-40 lang-en">The first intelligent engine for the semantic age.</p>
+                <p class="mt-6 text-xl opacity-40 lang-cn">语义时代，第一款真正智能的音频引擎。</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="py-40 px-10 relative z-10" id="scenarios">
+        <div class="max-w-7xl mx-auto space-y-32">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                <div class="space-y-8">
+                    <div class="text-[10px] tracking-[0.5em] opacity-40 uppercase">Case 01</div>
+                    <h3 class="text-4xl font-light lang-en">Narrative Arts</h3>
+                    <h3 class="text-4xl font-light lang-cn">叙事艺术</h3>
+                    <div class="space-y-6 opacity-40 font-light text-lg">
+                        <div class="lang-en">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-red-400">The Legacy Way</p>
+                            <p>Manually adjusting BGM loops, fading room tone, and cutting breaths for 20 hours.</p>
+                        </div>
+                        <div class="lang-cn">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-red-400">传统繁琐流程</p>
+                            <p>反复手动对齐BGM、环境音淡入淡出、修剪数千处呼吸声。耗时20小时。</p>
+                        </div>
+                        <div class="lang-en">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-white">semanticEdit</p>
+                            <p class="text-white">One prompt. Full atmospheric persistence. Finished in 10 minutes.</p>
+                        </div>
+                        <div class="lang-cn">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-white">semanticEdit</p>
+                            <p class="text-white">一句指令。全自动氛围持久化处理。10分钟即刻完稿。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-4 rounded-[40px] overflow-hidden">
+                    <img src="http://googleusercontent.com/image_generation_content/0" alt="Old vs New" class="w-full h-80 object-cover rounded-[30px] opacity-80">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+                <div class="glass p-4 rounded-[40px] overflow-hidden order-last md:order-first">
+                    <img src="https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop" alt="Clarity" class="w-full h-80 object-cover rounded-[30px] opacity-40">
+                </div>
+                <div class="space-y-8">
+                    <div class="text-[10px] tracking-[0.5em] opacity-40 uppercase">Case 02</div>
+                    <h3 class="text-4xl font-light lang-en">Corporate Intelligence</h3>
+                    <h3 class="text-4xl font-light lang-cn">商业智能</h3>
+                    <div class="space-y-6 opacity-40 font-light text-lg">
+                        <div class="lang-en">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-red-400">The Legacy Way</p>
+                            <p>Staring at spectral peaks to find a single quote in a 3-hour recording.</p>
+                        </div>
+                        <div class="lang-cn">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-red-400">传统检索方式</p>
+                            <p>在数公里的波形图中反复横跳，只为在3小时录音中找一句话。</p>
+                        </div>
+                        <div class="lang-en">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-white">semanticEdit</p>
+                            <p class="text-white">Isolate and refine dialogue based on semantics, not frequency.</p>
+                        </div>
+                        <div class="lang-cn">
+                            <p class="mb-2 uppercase text-[10px] tracking-widest text-white">semanticEdit</p>
+                            <p class="text-white">基于语义逻辑直接提取并优化对话，告别频率观测。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-40 text-center relative overflow-hidden" id="access">
+        <h2 class="text-4xl md:text-6xl font-light mb-12 tracking-tighter lang-en">The future is silent <br>until you speak it.</h2>
+        <h2 class="text-4xl md:text-6xl font-light mb-12 tracking-tighter lang-cn">未来本无声，<br>直到你开口。</h2>
+        <div class="max-w-md mx-auto px-4">
+            <div id="waitlist-form" class="flex flex-col sm:flex-row gap-3">
+                <input id="waitlist-email" type="email"
+                    placeholder="your@email.com"
+                    class="flex-1 px-6 py-4 bg-white/5 border border-white/20 rounded-full text-white placeholder-white/30 text-sm tracking-wide focus:outline-none focus:border-white/50 transition">
+                <button onclick="submitWaitlist()"
+                    class="px-8 py-4 bg-white text-black rounded-full font-bold text-sm tracking-widest uppercase hover:scale-105 transition active:scale-95 whitespace-nowrap">
+                    <span class="lang-en">Request Access</span><span class="lang-cn">获取内测名额</span>
+                </button>
+            </div>
+            <p id="waitlist-msg" class="mt-5 text-sm opacity-50 hidden"></p>
+        </div>
+        <div class="mt-40 opacity-10 text-[10px] tracking-widest italic">© 2026 semanticEdit. Beijing Zemo Internet.</div>
+    </footer>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power2.out" });
+        });
+
+        function toggleLang() {
+            const body = document.body;
+            body.dataset.lang = body.dataset.lang === 'en' ? 'cn' : 'en';
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        const tl = gsap.timeline({ scrollTrigger: { trigger: ".comparison-container", start: "top top", end: "bottom bottom", scrub: 1 }});
+        tl.to("#step-1", { opacity: 1, duration: 1 }).to("#step-1", { opacity: 0, y: -50, duration: 1, delay: 1 })
+          .to("#step-2", { opacity: 1, duration: 1 }).to("#step-2", { opacity: 0, y: -50, duration: 1, delay: 1 })
+          .to("#step-3", { opacity: 1, scale: 1.1, duration: 1 });
+
+        gsap.from("#main-title", { opacity: 0, y: 100, duration: 2, ease: "power4.out" });
+
+        // 如果官网和 API 不同域，改为完整 URL，例如 'https://api.yourdomain.com'
+        const API_BASE = '';
+
+        async function submitWaitlist() {
+            const input = document.getElementById('waitlist-email');
+            const msg = document.getElementById('waitlist-msg');
+            const email = input.value.trim();
+            const lang = document.body.dataset.lang;
+
+            if (!email) {
+                msg.textContent = lang === 'cn' ? '请输入邮箱地址。' : 'Please enter your email.';
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            const btn = document.querySelector('#waitlist-form button');
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+
+            try {
+                const res = await fetch(API_BASE + '/api/v1/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+
+                if (data.code === 'registered') {
+                    msg.textContent = lang === 'cn'
+                        ? '已收到！公测开始时我们会第一时间联系你。'
+                        : "You're in! We'll reach out when we launch.";
+                    input.value = '';
+                    document.getElementById('waitlist-form').style.display = 'none';
+                } else if (data.code === 'already_registered') {
+                    msg.textContent = lang === 'cn'
+                        ? '该邮箱已在等候列表中，我们会第一时间通知你。'
+                        : "This email is already on our waitlist. We'll notify you soon.";
+                } else {
+                    msg.textContent = lang === 'cn' ? '邮箱格式不正确，请检查后重试。' : 'Please enter a valid email address.';
+                    btn.disabled = false;
+                    btn.style.opacity = '';
+                }
+            } catch (e) {
+                msg.textContent = lang === 'cn' ? '提交失败，请稍后重试。' : 'Something went wrong. Please try again.';
+                btn.disabled = false;
+                btn.style.opacity = '';
+            }
+            msg.classList.remove('hidden');
+        }
+
+        document.getElementById('waitlist-email').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitWaitlist();
+        });
+    </script>
+</body>
+</html>
