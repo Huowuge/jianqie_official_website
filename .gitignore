@@ -1,0 +1,64 @@
+# created by virtualenv automatically
+# 🔥 核心原则：只追踪 *.html，其他统统忽略
+
+# --- 忽略所有文件（白名单机制）---
+.venv/bin
+# --- 例外：允许追踪 HTML 文件 ---
+!*.html
+!/**/*.html
+
+# --- 但忽略 __pycache__ 和 .pyc 即使它们在 html 目录 ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- PyCharm / IDEA 配置 ---
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# --- Python 虚拟环境 ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Python 项目通用忽略 ---
+*.py
+!.gitignore
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- 系统文件 ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# --- 环境变量/敏感信息 ---
+.env
+*.key
+*.pem
