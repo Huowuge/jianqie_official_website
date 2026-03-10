@@ -308,14 +308,64 @@
           .to("#step-2", { opacity: 1, duration: 1 }).to("#step-2", { opacity: 0, y: -50, duration: 1, delay: 1 })
           .to("#step-3", { opacity: 1, scale: 1.1, duration: 1 });
 
+        // 1. 定义生产环境 API 地址
+        const API_BASE = 'https://api.semacut.com';
+
         async function submitWaitlist() {
-            const input = document.getElementById('waitlist-email');
+            const emailInput = document.getElementById('waitlist-email');
             const msg = document.getElementById('waitlist-msg');
-            const lang = document.body.dataset.lang;
-            // 此处保持你原有的 Formspree 逻辑...
-            msg.textContent = lang === 'cn' ? '提交中...' : 'Submitting...';
+            const btn = document.querySelector('#access button');
+            const email = emailInput.value.trim();
+            const lang = document.body.dataset.lang || 'en'; // 获取当前语言环境
+
+            // 简单的邮箱格式校验
+            if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+                msg.textContent = lang === 'cn' ? '请输入有效的邮箱地址' : 'Please enter a valid email.';
+                msg.style.color = '#ff6b6b';
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            // UI 状态更新
+            btn.disabled = true;
+            msg.textContent = lang === 'cn' ? '正在提交...' : 'Submitting...';
             msg.classList.remove('hidden');
+            msg.style.color = 'white';
+
+            try {
+                // 调用你的 FastAPI 接口
+                const response = await fetch(`${API_BASE}/api/v1/waitlist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email }) // 确保你的后端 Pydantic 模型接收 "email" 字段
+                });
+
+                if (response.ok) {
+                    // 提交成功
+                    msg.textContent = lang === 'cn' ? '感谢关注！我们已将您加入内测名单。' : 'Thank you! You have been added to the waitlist.';
+                    msg.style.color = '#4ade80'; // 绿色提示
+                    emailInput.value = ''; // 清空输入框
+                } else {
+                    // 业务逻辑错误（如邮箱已存在）
+                    const errorData = await response.json();
+                    msg.textContent = lang === 'cn' ? (errorData.detail || '提交失败，请稍后再试') : (errorData.detail || 'Submission failed.');
+                    msg.style.color = '#ff6b6b';
+                }
+            } catch (error) {
+                // 网络错误（如 SSL 握手失败、443被封锁、跨域问题）
+                console.error('Submission Error:', error);
+                msg.textContent = lang === 'cn' ? '网络连接失败。请稍后再试或联系我们。' : 'Connection failed. Please try again later.';
+                msg.style.color = '#ff6b6b';
+            } finally {
+                btn.disabled = false;
+            }
         }
+
+        document.getElementById('waitlist-email').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitWaitlist();
+        });
     </script>
 </body>
 </html>
