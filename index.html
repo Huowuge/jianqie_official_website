@@ -342,15 +342,18 @@
                     body: JSON.stringify({ email: email }) // 确保你的后端 Pydantic 模型接收 "email" 字段
                 });
 
+                const data = await response.json();
                 if (response.ok) {
-                    // 提交成功
-                    msg.textContent = lang === 'cn' ? '感谢关注！我们已将您加入内测名单。' : 'Thank you! You have been added to the waitlist.';
-                    msg.style.color = '#4ade80'; // 绿色提示
-                    emailInput.value = ''; // 清空输入框
+                    if (data.code === 'already_registered') {
+                        msg.textContent = lang === 'cn' ? '您的邮箱已在名单中，无需重复提交。' : 'This email is already on the waitlist.';
+                        msg.style.color = '#facc15';
+                    } else {
+                        msg.textContent = lang === 'cn' ? '感谢关注！我们已将您加入内测名单。' : 'Thank you! You have been added to the waitlist.';
+                        msg.style.color = '#4ade80';
+                        emailInput.value = '';
+                    }
                 } else {
-                    // 业务逻辑错误（如邮箱已存在）
-                    const errorData = await response.json();
-                    msg.textContent = lang === 'cn' ? (errorData.detail || '提交失败，请稍后再试') : (errorData.detail || 'Submission failed.');
+                    msg.textContent = lang === 'cn' ? (data.detail || '提交失败，请稍后再试') : (data.detail || 'Submission failed.');
                     msg.style.color = '#ff6b6b';
                 }
             } catch (error) {
